@@ -1,62 +1,79 @@
+import { useNavigate } from 'react-router-dom';
 import LikeButton from '../LikeButton/LikeButton';
 import RatingBadge from '../RatingBadge/RatingBadge';
 import './MovieDetails.css';
 
-function MovieDetails() {
+function MovieDetails({ movie }) {
+  const navigate = useNavigate();
+
+  if (!movie) return null;
+
+  const hasPoster = movie.Poster && movie.Poster !== 'N/A';
+
   return (
     <article className="movie-details">
-      <button type="button" className="movie-details__back">
-        ← Ко всем фильмам
+      <button type="button" className="movie-details__back" onClick={() => navigate(-1)}>
+        ← Назад
       </button>
 
       <div className="movie-details__layout">
         <div className="movie-details__poster-col">
-          <img
-            className="movie-details__poster"
-            src="https://m.media-amazon.com/images/M/MV5BNzY3OWQ5NDktNWQ2OC00ZjdlLThkMmItMDhhNDk3NTFiZGU4XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg"
-            alt="Joker"
-          />
+          {hasPoster ? (
+            <img className="movie-details__poster" src={movie.Poster} alt={movie.Title} />
+          ) : (
+            <div className="movie-details__poster" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: 'var(--color-surface-raised)', minHeight: '300px' }}>
+              Постер отсутствует
+            </div>
+          )}
         </div>
 
         <div className="movie-details__main">
           <div className="movie-details__heading">
             <div>
-              <h1 className="movie-details__title">Joker</h1>
-              <p className="movie-details__meta">2019 · R · 122 min</p>
+              <h1 className="movie-details__title">{movie.Title}</h1>
+              <p className="movie-details__meta">
+                {movie.Year} {movie.Rated !== 'N/A' && `· ${movie.Rated}`} {movie.Runtime !== 'N/A' && `· ${movie.Runtime}`}
+              </p>
             </div>
             <LikeButton />
           </div>
 
-          <p className="movie-details__genre">Crime, Drama, Thriller</p>
+          {movie.Genre && <p className="movie-details__genre">{movie.Genre}</p>}
+          {movie.Plot && <p className="movie-details__plot">{movie.Plot}</p>}
 
-          <p className="movie-details__plot">
-            Arthur Fleck, a party clown and a failed stand-up comedian, leads an
-            impoverished life with his ailing mother. However, when society
-            shuns him and brands him as a freak, he decides to embrace the life
-            of chaos in Gotham City.
-          </p>
-
-          <div className="movie-details__ratings">
-            <RatingBadge />
-            <div className="rating-badge">
-              <span className="rating-badge__value">68%</span>
-              <span className="rating-badge__source">Rotten Tomatoes</span>
+          {movie.Ratings && movie.Ratings.length > 0 && (
+            <div className="movie-details__ratings">
+              {movie.Ratings.map((rating) => (
+                <RatingBadge key={rating.Source} source={rating.Source} value={rating.Value} />
+              ))}
             </div>
-            <div className="rating-badge">
-              <span className="rating-badge__value">59/100</span>
-              <span className="rating-badge__source">Metacritic</span>
-            </div>
-          </div>
+          )}
 
           <dl className="movie-details__facts">
-            <div className="movie-details__fact"><dt>Режиссёр</dt><dd>Todd Phillips</dd></div>
-            <div className="movie-details__fact"><dt>Сценарий</dt><dd>Todd Phillips, Scott Silver, Bob Kane</dd></div>
-            <div className="movie-details__fact"><dt>В ролях</dt><dd>Joaquin Phoenix, Robert De Niro, Zazie Beetz</dd></div>
-            <div className="movie-details__fact"><dt>Дата выхода</dt><dd>04 Oct 2019</dd></div>
-            <div className="movie-details__fact"><dt>Язык</dt><dd>English, German</dd></div>
-            <div className="movie-details__fact"><dt>Страна</dt><dd>United States, Canada, Australia</dd></div>
-            <div className="movie-details__fact"><dt>Награды</dt><dd>Won 2 Oscars. 120 wins &amp; 247 nominations total</dd></div>
-            <div className="movie-details__fact"><dt>Сборы</dt><dd>$335,477,657</dd></div>
+            {movie.Director && movie.Director !== 'N/A' && (
+              <div className="movie-details__fact"><dt>Режиссёр</dt><dd>{movie.Director}</dd></div>
+            )}
+            {movie.Writer && movie.Writer !== 'N/A' && (
+              <div className="movie-details__fact"><dt>Сценарий</dt><dd>{movie.Writer}</dd></div>
+            )}
+            {movie.Actors && movie.Actors !== 'N/A' && (
+              <div className="movie-details__fact"><dt>В ролях</dt><dd>{movie.Actors}</dd></div>
+            )}
+            {movie.Released && movie.Released !== 'N/A' && (
+              <div className="movie-details__fact"><dt>Дата выхода</dt><dd>{movie.Released}</dd></div>
+            )}
+            {movie.Language && movie.Language !== 'N/A' && (
+              <div className="movie-details__fact"><dt>Язык</dt><dd>{movie.Language}</dd></div>
+            )}
+            {movie.Country && movie.Country !== 'N/A' && (
+              <div className="movie-details__fact"><dt>Страна</dt><dd>{movie.Country}</dd></div>
+            )}
+            {movie.Awards && movie.Awards !== 'N/A' && (
+              <div className="movie-details__fact"><dt>Награды</dt><dd>{movie.Awards}</dd></div>
+            )}
+            {movie.BoxOffice && movie.BoxOffice !== 'N/A' && (
+              <div className="movie-details__fact"><dt>Сборы</dt><dd>{movie.BoxOffice}</dd></div>
+            )}
           </dl>
         </div>
       </div>
